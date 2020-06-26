@@ -1,0 +1,52 @@
+{
+	"name": "pro-mern-stack-2",
+	"version": "1.0.0",
+	"description": "Module 6 exercises",
+	"main": "index.js",
+	"scripts": {
+		"#start": "Starts UI server. Will use HMR if HMR is enabled AND we're dev mode.",
+		"start": "node dist/server.js",
+		"#watch": "Compile, and recompile on any changes. Only use if HMR is NOT ENABLED",
+		"watch": "webpack --watch",
+		"#watch-server-hmr": "Recompile server HMR bundle on changes",
+		"watch-server-hmr": "webpack -w --config webpack.serverHMR.js",
+		"#dev-all": "Dev mode: watch for server changes and start UI server (modify sleep timer based on how long it takes to compile)",
+		"dev-all": "rm dist/* && npm run watch-server-hmr & sleep 5 && npm start",
+		"#compile": "For production. Generates JS bundles. Use with start.",
+		"compile": "webpack --mode production",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Tri Dang",
+	"license": "ISC",
+	"dependencies": {
+		"bootstrap": "^3.4.1",
+		"dotenv": "^8.2.0",
+		"eslint": "^6.8.0",
+		"express": "^4.17.1",
+		"isomorphic-fetch": "^2.2.1",
+		"nodemon": "^1.19.4",
+		"react": "^16.13.1",
+		"react-bootstrap": "^0.33.1",
+		"react-dom": "^16.13.1",
+		"react-router-bootstrap": "^0.25.0",
+		"react-router-dom": "^4.3.1",
+		"react-select": "^2.4.4",
+		"serialize-javascript": "^1.9.1",
+		"source-map-support": "^0.5.19",
+		"url-search-params": "^1.1.0"
+	},
+	"devDependencies": {
+		"@babel/cli": "^7.8.4",
+		"@babel/core": "^7.8.4",
+		"@babel/plugin-transform-runtime": "^7.9.0",
+		"@babel/preset-env": "^7.2.3",
+		"@babel/preset-react": "^7.8.3",
+		"babel-loader": "^8.1.0",
+		"webpack": "^4.42.1",
+		"webpack-cli": "^3.3.11",
+		"webpack-dev-middleware": "^3.7.2",
+		"webpack-hot-middleware": "^2.25.0",
+		"webpack-merge": "^4.2.2",
+		"webpack-node-externals": "^1.7.2"
+	}
+}

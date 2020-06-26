@@ -1,0 +1,20 @@
+table.bordered-table th,
+td {
+	border: 1px solid silver;
+	padding: 4px;
+}
+table.bordered-table {
+	border-collapse: collapse;
+}
+a.active {
+	background-color: #d8d8f5;
+}
+
+.panel-title a {
+	display: block;
+	width: 100%;
+	cursor: pointer;
+}
+table.table-hover tr {
+	cursor: pointer;
+}
