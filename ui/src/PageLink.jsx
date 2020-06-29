@@ -1,6 +1,7 @@
 import React from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
 
+// component for pagination
 export default function PageLink({ params, page, activePage, children }) {
 	params.set('page', page);
 	if (page == 0) return React.cloneElement(children, { disabled: true });

@@ -22,7 +22,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "e15232c192fd503d6fe8";
+/******/ 	var hotCurrentHash = "d1e53435c909b9c55cc0";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1003,6 +1003,7 @@ function template(body, data) {
     <title>Pro MERN Stack</title>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" >
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://apis.google.com/js/api:client.js"></script>
     <style>
       table.table-hover tr {cursor: pointer;}
       .panel-title a {display: block; width: 100%; cursor: pointer;}
@@ -1036,15 +1037,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var express__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! express */ "express");
 /* harmony import */ var express__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(express__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _render_jsx__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./render.jsx */ "./server/render.jsx");
-/* harmony import */ var source_map_support__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! source-map-support */ "source-map-support");
-/* harmony import */ var source_map_support__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(source_map_support__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var http_proxy_middleware__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! http-proxy-middleware */ "http-proxy-middleware");
+/* harmony import */ var http_proxy_middleware__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(http_proxy_middleware__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var source_map_support__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! source-map-support */ "source-map-support");
+/* harmony import */ var source_map_support__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(source_map_support__WEBPACK_IMPORTED_MODULE_4__);
 
  // import proxy from 'http-proxy-middleware';
+
 
  //source-map-support makes it convenient to add breakpoints, make error messages more readable
 
 
-source_map_support__WEBPACK_IMPORTED_MODULE_3___default.a.install();
+source_map_support__WEBPACK_IMPORTED_MODULE_4___default.a.install();
 dotenv__WEBPACK_IMPORTED_MODULE_0___default.a.config();
 const app = express__WEBPACK_IMPORTED_MODULE_1___default()();
 /* 
@@ -1076,10 +1080,22 @@ if (enableHMR && "development" !== 'production') {
   app.use(hotMiddleware(compiler));
 }
 
-app.use(express__WEBPACK_IMPORTED_MODULE_1___default.a.static('public')); // saving the API Endpoint in a global variable so it can be read by browser
+app.use(express__WEBPACK_IMPORTED_MODULE_1___default.a.static('public')); // Proxy-mode is disabled if we comment out API_PROXY_TARGET in .env
+
+const apiProxyTarget = process.env.API_PROXY_TARGET;
+
+if (apiProxyTarget) {
+  app.use('/graphql', http_proxy_middleware__WEBPACK_IMPORTED_MODULE_3___default()({
+    target: apiProxyTarget
+  }));
+  app.use('/auth', http_proxy_middleware__WEBPACK_IMPORTED_MODULE_3___default()({
+    target: apiProxyTarget
+  }));
+} // saving the API Endpoint in a global variable so it can be read by browser
 // const UI_API_ENDPOINT =
 // 	process.env.UI_API_ENDPOINT || 'http://localhost:3000/graphql';
 // const env = { UI_API_ENDPOINT };
+
 
 if (!process.env.UI_API_ENDPOINT) {
   process.env.UI_API_ENDPOINT = 'http://localhost:3000/graphql';
@@ -1087,12 +1103,18 @@ if (!process.env.UI_API_ENDPOINT) {
 
 if (!process.env.UI_SERVER_API_ENDPOINT) {
   process.env.UI_SERVER_API_ENDPOINT = process.env.UI_API_ENDPOINT;
+}
+
+if (!process.env.UI_AUTH_ENDPOINT) {
+  process.env.UI_AUTH_ENDPOINT = 'http://localhost:3000/auth';
 } // saving the env variable in a JS file so the browser can actually read from it
 
 
 app.get('/env.js', function (req, res) {
   const env = {
-    UI_API_ENDPOINT: process.env.UI_API_ENDPOINT
+    UI_API_ENDPOINT: process.env.UI_API_ENDPOINT,
+    UI_AUTH_ENDPOINT: process.env.UI_AUTH_ENDPOINT,
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID
   };
   res.send(`window.ENV = ${JSON.stringify(env)}`);
 }); // using Server-side Rendering
@@ -2856,6 +2878,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Contents_jsx__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Contents.jsx */ "./src/Contents.jsx");
 /* harmony import */ var _IssueAddNavItem_jsx__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./IssueAddNavItem.jsx */ "./src/IssueAddNavItem.jsx");
 /* harmony import */ var _Search_jsx__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Search.jsx */ "./src/Search.jsx");
+/* harmony import */ var _SignInNavItem_jsx__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./SignInNavItem.jsx */ "./src/SignInNavItem.jsx");
+
 
 
 
@@ -2878,7 +2902,7 @@ function NavBar() {
     sm: 5
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Navbar"].Form, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Search_jsx__WEBPACK_IMPORTED_MODULE_5__["default"], null))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Nav"], {
     pullRight: true
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_IssueAddNavItem_jsx__WEBPACK_IMPORTED_MODULE_4__["default"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["NavDropdown"], {
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_IssueAddNavItem_jsx__WEBPACK_IMPORTED_MODULE_4__["default"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_SignInNavItem_jsx__WEBPACK_IMPORTED_MODULE_6__["default"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["NavDropdown"], {
     id: "user-dropdown",
     title: react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Glyphicon"], {
       glyph: "option-vertical"
@@ -2920,6 +2944,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_router_bootstrap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-bootstrap */ "react-router-bootstrap");
 /* harmony import */ var react_router_bootstrap__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_router_bootstrap__WEBPACK_IMPORTED_MODULE_1__);
 
+ // component for pagination
 
 function PageLink({
   params,
@@ -3016,6 +3041,216 @@ class Search extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Component {
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (Object(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["withRouter"])(Object(_withToast_jsx__WEBPACK_IMPORTED_MODULE_4__["default"])(Search)));
+
+/***/ }),
+
+/***/ "./src/SignInNavItem.jsx":
+/*!*******************************!*\
+  !*** ./src/SignInNavItem.jsx ***!
+  \*******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react_bootstrap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-bootstrap */ "react-bootstrap");
+/* harmony import */ var react_bootstrap__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _withToast_jsx__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./withToast.jsx */ "./src/withToast.jsx");
+
+
+
+
+class SignInNavItem extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showing: false,
+      disabledGoogleAuth: true,
+      user: {
+        signedIn: false,
+        givenName: ' '
+      }
+    };
+    this.showModal = this.showModal.bind(this);
+    this.hideModal = this.hideModal.bind(this);
+    this.signOut = this.signOut.bind(this);
+    this.signIn = this.signIn.bind(this);
+  }
+
+  async componentDidMount() {
+    // load the Google API Library
+    const clientId = window.ENV.GOOGLE_CLIENT_ID;
+    if (!clientId) return;
+    window.gapi.load('auth2', () => {
+      if (!window.gapi.auth2.getAuthInstance()) {
+        window.gapi.auth2.init({
+          client_id: clientId
+        }).then(() => {
+          this.setState({
+            disabledGoogleAuth: false
+          });
+        });
+      }
+    });
+    await this.loadData();
+  }
+
+  showModal() {
+    // initial attempt to retrieve the Google Client ID
+    const clientId = window.ENV.GOOGLE_CLIENT_ID;
+    const {
+      showError
+    } = this.props;
+
+    if (!clientId) {
+      showError('Missing environment variable GOOGLE_CLIENT_ID');
+      return;
+    }
+
+    this.setState({
+      showing: true
+    });
+  }
+
+  hideModal() {
+    this.setState({
+      showing: false
+    });
+  }
+
+  async signOut() {
+    const apiEndpoint = window.ENV.UI_AUTH_ENDPOINT;
+    const {
+      showError
+    } = this.props;
+
+    try {
+      await fetch(`${apiEndpoint}/signout`, {
+        method: 'POST'
+      });
+      const auth2 = window.gapi.auth2.getAuthInstance();
+      await auth2.signOut();
+      this.setState({
+        user: {
+          signedIn: false,
+          givenName: ''
+        }
+      });
+    } catch (error) {
+      showError(`Error signing out: ${error}`);
+    }
+  }
+
+  async signIn() {
+    this.hideModal();
+    const {
+      showError
+    } = this.props;
+    let googleToken; // we use Google API's Authentication library to retrieve the token
+
+    try {
+      const auth2 = window.gapi.auth2.getAuthInstance();
+      const googleUser = await auth2.signIn();
+      googleToken = googleUser.getAuthResponse().id_token;
+    } catch (error) {
+      showError(`Error authenticating with Google: ${error.error}`);
+    } // send the token to our back-end Authentication API so that it can be verified
+
+
+    try {
+      const apiEndpoint = window.ENV.UI_AUTH_ENDPOINT;
+      const response = await fetch(`${apiEndpoint}/signin`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          google_token: googleToken
+        })
+      });
+      const body = await response.text();
+      const result = JSON.parse(body);
+      const {
+        signedIn,
+        givenName
+      } = result;
+      this.setState({
+        user: {
+          signedIn,
+          givenName
+        }
+      });
+    } catch (error) {
+      showError(`Error signing into the app: ${error}`);
+    }
+  } // called on browser refresh to retrieve credentials from back-end persistent session
+
+
+  async loadData() {
+    const apiEndpoint = window.ENV.UI_AUTH_ENDPOINT;
+    const response = await fetch(`${apiEndpoint}/user`, {
+      method: 'POST'
+    });
+    const body = await response.text();
+    const result = JSON.parse(body);
+    const {
+      signedIn,
+      givenName
+    } = result;
+    this.setState({
+      user: {
+        signedIn,
+        givenName
+      }
+    });
+  }
+
+  render() {
+    const {
+      user,
+      disabledGoogleAuth
+    } = this.state;
+
+    if (user.signedIn) {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["NavDropdown"], {
+        title: user.givenName,
+        id: "user"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], {
+        onClick: this.signOut
+      }, "Sign Out"));
+    }
+
+    const {
+      showing
+    } = this.state;
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["NavItem"], {
+      onClick: this.showModal
+    }, "Sign In"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Modal"], {
+      keyboard: true,
+      show: showing,
+      onHide: this.hideModal,
+      bsSize: "sm"
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Modal"].Header, {
+      closeButton: true
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Modal"].Title, null, "Sign In")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Modal"].Body, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Button"], {
+      block: true,
+      disabled: disabledGoogleAuth,
+      bsStyle: "primary",
+      onClick: this.signIn
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+      src: "https://goo.gl/4yjp6B",
+      alt: "Sign In"
+    }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Modal"].Footer, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Button"], {
+      bsStyle: "link",
+      onClick: this.hideModal
+    }, "Cancel"))));
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (Object(_withToast_jsx__WEBPACK_IMPORTED_MODULE_2__["default"])(SignInNavItem));
 
 /***/ }),
 
@@ -3479,6 +3714,17 @@ module.exports = require("dotenv");
 /***/ (function(module, exports) {
 
 module.exports = require("express");
+
+/***/ }),
+
+/***/ "http-proxy-middleware":
+/*!****************************************!*\
+  !*** external "http-proxy-middleware" ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("http-proxy-middleware");
 
 /***/ }),
 

@@ -3,6 +3,7 @@ import express from 'express';
 // import proxy from 'http-proxy-middleware';
 import render from './render.jsx';
 
+import proxy from 'http-proxy-middleware';
 //source-map-support makes it convenient to add breakpoints, make error messages more readable
 import SourceMapSupport from 'source-map-support';
 SourceMapSupport.install();
@@ -39,6 +40,13 @@ if (enableHMR && process.env.NODE_ENV !== 'production') {
 
 app.use(express.static('public'));
 
+// Proxy-mode is disabled if we comment out API_PROXY_TARGET in .env
+const apiProxyTarget = process.env.API_PROXY_TARGET;
+if (apiProxyTarget) {
+	app.use('/graphql', proxy({ target: apiProxyTarget }));
+	app.use('/auth', proxy({ target: apiProxyTarget }));
+}
+
 // saving the API Endpoint in a global variable so it can be read by browser
 // const UI_API_ENDPOINT =
 // 	process.env.UI_API_ENDPOINT || 'http://localhost:3000/graphql';
@@ -51,9 +59,17 @@ if (!process.env.UI_SERVER_API_ENDPOINT) {
 	process.env.UI_SERVER_API_ENDPOINT = process.env.UI_API_ENDPOINT;
 }
 
+if (!process.env.UI_AUTH_ENDPOINT) {
+	process.env.UI_AUTH_ENDPOINT = 'http://localhost:3000/auth';
+}
+
 // saving the env variable in a JS file so the browser can actually read from it
 app.get('/env.js', function(req, res) {
-	const env = { UI_API_ENDPOINT: process.env.UI_API_ENDPOINT };
+	const env = {
+		UI_API_ENDPOINT: process.env.UI_API_ENDPOINT,
+		UI_AUTH_ENDPOINT: process.env.UI_AUTH_ENDPOINT,
+		GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID
+	};
 	res.send(`window.ENV = ${JSON.stringify(env)}`);
 });
 

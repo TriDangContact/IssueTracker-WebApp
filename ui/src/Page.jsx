@@ -14,6 +14,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import Contents from './Contents.jsx';
 import IssueAddNavItem from './IssueAddNavItem.jsx';
 import Search from './Search.jsx';
+import SignInNavItem from './SignInNavItem.jsx';
 
 // create a simple navbar that links to our routes
 function NavBar() {
@@ -44,6 +45,7 @@ function NavBar() {
 
 				<Nav pullRight>
 					<IssueAddNavItem />
+					<SignInNavItem />
 					<NavDropdown
 						id="user-dropdown"
 						title={<Glyphicon glyph="option-vertical" />}

@@ -1,9 +1,18 @@
 require('dotenv').config();
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const { connectToDb } = require('./db.js');
 const { installHandler } = require('./api_handler.js');
+const auth = require('./auth.js');
 
 const app = express();
+
+// For use with JWT to persist session data
+app.use(cookieParser());
+
+// for Authentication API
+app.use('/auth', auth.routes);
+
 // bind the Apollo GraphQL server to the app
 installHandler(app);
 
