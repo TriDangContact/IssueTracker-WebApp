@@ -18,3 +18,8 @@ a.active {
 table.table-hover tr {
 	cursor: pointer;
 }
+
+#profile_pic {
+	height: 30px;
+	width: 30px;
+}

@@ -8,10 +8,23 @@ import {
 	Table
 } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
+import UserContext from './UserContext.js';
 
 // wrapping in React Router component so we can access Router props
-const IssueRow = withRouter(
-	({ issue, location: { search }, closeIssue, deleteIssue, index }) => {
+class IssueRowPlain extends React.Component {
+	render() {
+		const {
+			issue,
+			location: { search },
+			closeIssue,
+			deleteIssue,
+			index
+		} = this.props;
+
+		// for use with Authorization feature
+		const user = this.context;
+		const disabled = !user.signedIn;
+
 		// appending the id to the path
 		const selectLocation = { pathname: `/issues/${issue.id}`, search };
 		const editTooltip = (
@@ -58,12 +71,12 @@ const IssueRow = withRouter(
 						</OverlayTrigger>
 					</LinkContainer>{' '}
 					<OverlayTrigger delayShow={1000} overlay={closeTooltip}>
-						<Button bsSize="xsmall" onClick={onClose}>
+						<Button bsSize="xsmall" onClick={onClose} disabled={disabled}>
 							<Glyphicon glyph="remove" />
 						</Button>
 					</OverlayTrigger>{' '}
 					<OverlayTrigger delayShow={1000} overlay={deleteTooltip}>
-						<Button bsSize="xsmall" onClick={onDelete}>
+						<Button bsSize="xsmall" onClick={onDelete} disabled={disabled}>
 							<Glyphicon glyph="trash" />
 						</Button>
 					</OverlayTrigger>
@@ -73,7 +86,13 @@ const IssueRow = withRouter(
 
 		return <LinkContainer to={selectLocation}>{tableRow}</LinkContainer>;
 	}
-);
+}
+
+// specify the Context object, for use with Authorization feature
+IssueRowPlain.contextType = UserContext;
+const IssueRow = withRouter(IssueRowPlain);
+// need to delete the wrapped component's contextType or it will cause error
+delete IssueRow.contextType;
 
 export default function IssueTable({ issues, closeIssue, deleteIssue }) {
 	//retrieve the parent's callback and pass it to the row component

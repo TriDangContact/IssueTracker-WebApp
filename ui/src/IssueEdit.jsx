@@ -18,6 +18,7 @@ import DateInput from './DateInput.jsx';
 import TextInput from './TextInput.jsx';
 import store from './store.js';
 import withToast from './withToast.jsx';
+import UserContext from './UserContext.js';
 
 class IssueEdit extends React.Component {
 	constructor() {
@@ -191,6 +192,8 @@ class IssueEdit extends React.Component {
 			issue: { created, due }
 		} = this.state;
 
+		const user = this.context;
+
 		// render the entire form if we were able to fetch a valid object
 		return (
 			<Panel>
@@ -306,7 +309,11 @@ class IssueEdit extends React.Component {
 						<FormGroup>
 							<Col smOffset={3} sm={6}>
 								<ButtonToolbar>
-									<Button bsStyle="primary" type="submit">
+									<Button
+										bsStyle="primary"
+										type="submit"
+										disabled={!user.signedIn}
+									>
 										Submit
 									</Button>
 									<LinkContainer to="/issues">
@@ -331,6 +338,9 @@ class IssueEdit extends React.Component {
 		);
 	}
 }
+
+// specify the Context object, for use with Authorization feature
+IssueEdit.contextType = UserContext;
 
 // ToastWrapper hides the static fetchData() function, so we need to add a reference to it to our modified component
 const IssueEditWithToast = withToast(IssueEdit);

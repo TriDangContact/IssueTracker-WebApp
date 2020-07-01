@@ -4,6 +4,7 @@ const Router = require('express');
 const bodyParser = require('body-parser');
 const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
+const { AuthenticationError } = require('apollo-server-express');
 
 // attempt to retrieve the secret key, or generate one in dev mode
 let { JWT_SECRET } = process.env;
@@ -54,19 +55,24 @@ routes.post('/signin', async (req, res) => {
 	const client = new OAuth2Client();
 	let payload;
 	try {
-		const ticket = await client.verifyIdToken({ idToken: googleToken });
+		const clientId = process.env.GOOGLE_CLIENT_ID || '';
+		const ticket = await client.verifyIdToken({
+			idToken: googleToken,
+			audience: clientId
+		});
 		payload = ticket.getPayload();
 	} catch (error) {
 		res.status(403).send('Invalid credentials');
 	}
 
 	// retrieve the user credentials and send it as response
-	const { given_name: givenName, name, email } = payload;
+	const { given_name: givenName, name, email, picture } = payload;
 	const credentials = {
 		signedIn: true,
 		givenName,
 		name,
-		email
+		email,
+		picture
 	};
 
 	// generate jwt and store it in cookie
@@ -82,4 +88,13 @@ routes.post('/signout', async (req, res) => {
 	res.json({ status: 'ok' });
 });
 
-module.exports = { routes };
+// takes in a resolver, check for Authorization before serving request
+function mustBeSignedIn(resolver) {
+	return (root, args, { user }) => {
+		if (!user || !user.signedIn) {
+			throw new AuthenticationError(' You must be signed in');
+		}
+		return resolver(root, args, { user });
+	};
+}
+module.exports = { routes, getUser, mustBeSignedIn };

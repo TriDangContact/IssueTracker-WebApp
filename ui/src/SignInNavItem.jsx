@@ -1,7 +1,16 @@
 import React from 'react';
-import { NavItem, Modal, Button, NavDropdown, MenuItem } from 'react-bootstrap';
+import {
+	NavItem,
+	Modal,
+	Button,
+	NavDropdown,
+	MenuItem,
+	Image,
+	Glyphicon
+} from 'react-bootstrap';
 
 import withToast from './withToast.jsx';
+import UserContext from './UserContext.js';
 
 class SignInNavItem extends React.Component {
 	constructor(props) {
@@ -9,7 +18,7 @@ class SignInNavItem extends React.Component {
 		this.state = {
 			showing: false,
 			disabledGoogleAuth: true,
-			user: { signedIn: false, givenName: ' ' }
+			user: { signedIn: false, givenName: '', picture: '' }
 		};
 		this.showModal = this.showModal.bind(this);
 		this.hideModal = this.hideModal.bind(this);
@@ -18,6 +27,12 @@ class SignInNavItem extends React.Component {
 	}
 
 	async componentDidMount() {
+		// retrieve data from the context
+		const userContext = this.context;
+		this.setState({
+			user: { signedIn: userContext.signedIn, givenName: userContext.givenName }
+		});
+
 		// load the Google API Library
 		const clientId = window.ENV.GOOGLE_CLIENT_ID;
 		if (!clientId) return;
@@ -50,12 +65,17 @@ class SignInNavItem extends React.Component {
 		const apiEndpoint = window.ENV.UI_AUTH_ENDPOINT;
 		const { showError } = this.props;
 		try {
+			// API call to clear cookie on the back-end server
 			await fetch(`${apiEndpoint}/signout`, {
 				method: 'POST'
 			});
+			// sign out of the Google Authentication session
 			const auth2 = window.gapi.auth2.getAuthInstance();
 			await auth2.signOut();
 			this.setState({ user: { signedIn: false, givenName: '' } });
+
+			const { onUserChange } = this.props;
+			onUserChange({ signedIn: false });
 		} catch (error) {
 			showError(`Error signing out: ${error}`);
 		}
@@ -84,8 +104,11 @@ class SignInNavItem extends React.Component {
 			});
 			const body = await response.text();
 			const result = JSON.parse(body);
-			const { signedIn, givenName } = result;
-			this.setState({ user: { signedIn, givenName } });
+			const { signedIn, givenName, picture } = result;
+			this.setState({ user: { signedIn, givenName, picture } });
+
+			const { onUserChange } = this.props;
+			onUserChange({ signedIn, givenName });
 		} catch (error) {
 			showError(`Error signing into the app: ${error}`);
 		}
@@ -99,12 +122,15 @@ class SignInNavItem extends React.Component {
 		});
 		const body = await response.text();
 		const result = JSON.parse(body);
-		const { signedIn, givenName } = result;
-		this.setState({ user: { signedIn, givenName } });
+		const { signedIn, givenName, picture } = result;
+		this.setState({ user: { signedIn, givenName, picture } });
 	}
 
 	render() {
 		const { user, disabledGoogleAuth } = this.state;
+		// const picture = (
+		// 	<Image src={user.picture} responsive circle id="profile_pic" />
+		// );
 		if (user.signedIn) {
 			return (
 				<NavDropdown title={user.givenName} id="user">
@@ -142,4 +168,5 @@ class SignInNavItem extends React.Component {
 	}
 }
 
+SignInNavItem.contextType = UserContext;
 export default withToast(SignInNavItem);
