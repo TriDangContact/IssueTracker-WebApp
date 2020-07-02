@@ -22,7 +22,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "d0dce02d4b61b376694c";
+/******/ 	var hotCurrentHash = "33d9f316b3897b9395ee";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1092,6 +1092,9 @@ if (apiProxyTarget) {
   app.use('/auth', http_proxy_middleware__WEBPACK_IMPORTED_MODULE_3___default()({
     target: apiProxyTarget
   }));
+  console.log('PROXY MODE: ENABLED');
+} else {
+  console.log('PROXY MODE: DISABLED');
 } // saving the API Endpoint in a global variable so it can be read by browser
 // const UI_API_ENDPOINT =
 // 	process.env.UI_API_ENDPOINT || 'http://localhost:3000/graphql';
@@ -2916,6 +2919,7 @@ __webpack_require__.r(__webpack_exports__);
  // create a simple navbar that links to our routes
 
 function NavBar({
+  user,
   onUserChange
 }) {
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Navbar"], {
@@ -2933,6 +2937,7 @@ function NavBar({
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Navbar"].Form, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Search_jsx__WEBPACK_IMPORTED_MODULE_5__["default"], null))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Nav"], {
     pullRight: true
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_IssueAddNavItem_jsx__WEBPACK_IMPORTED_MODULE_4__["default"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_SignInNavItem_jsx__WEBPACK_IMPORTED_MODULE_6__["default"], {
+    user: user,
     onUserChange: onUserChange
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["NavDropdown"], {
     id: "user-dropdown",
@@ -2968,7 +2973,8 @@ class Page extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Component {
   async componentDidMount() {
     const apiEndpoint = window.ENV.UI_AUTH_ENDPOINT;
     const response = await fetch(`${apiEndpoint}/user`, {
-      method: 'POST'
+      method: 'POST',
+      credentials: 'include'
     });
     const body = await response.text();
     const result = JSON.parse(body);
@@ -2995,6 +3001,7 @@ class Page extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Component {
       user
     } = this.state;
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(NavBar, {
+      user: user,
       onUserChange: this.onUserChange
     }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Grid"], {
       fluid: true
@@ -3147,12 +3154,7 @@ class SignInNavItem extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Compone
     super(props);
     this.state = {
       showing: false,
-      disabledGoogleAuth: true,
-      user: {
-        signedIn: false,
-        givenName: '',
-        picture: ''
-      }
+      disabledGoogleAuth: true
     };
     this.showModal = this.showModal.bind(this);
     this.hideModal = this.hideModal.bind(this);
@@ -3161,15 +3163,7 @@ class SignInNavItem extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Compone
   }
 
   async componentDidMount() {
-    // retrieve data from the context
-    const userContext = this.context;
-    this.setState({
-      user: {
-        signedIn: userContext.signedIn,
-        givenName: userContext.givenName
-      }
-    }); // load the Google API Library
-
+    // load the Google API Library
     const clientId = window.ENV.GOOGLE_CLIENT_ID;
     if (!clientId) return;
     window.gapi.load('auth2', () => {
@@ -3218,22 +3212,19 @@ class SignInNavItem extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Compone
     try {
       // API call to clear cookie on the back-end server
       await fetch(`${apiEndpoint}/signout`, {
-        method: 'POST'
+        method: 'POST',
+        credentials: 'include'
       }); // sign out of the Google Authentication session
 
       const auth2 = window.gapi.auth2.getAuthInstance();
-      await auth2.signOut();
-      this.setState({
-        user: {
-          signedIn: false,
-          givenName: ''
-        }
-      });
+      await auth2.signOut(); // call back from Page.jsx, so that it can update its state and context value, and re-renders the page
+
       const {
         onUserChange
       } = this.props;
       onUserChange({
-        signedIn: false
+        signedIn: false,
+        givenName: ''
       });
     } catch (error) {
       showError(`Error signing out: ${error}`);
@@ -3260,6 +3251,7 @@ class SignInNavItem extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Compone
       const apiEndpoint = window.ENV.UI_AUTH_ENDPOINT;
       const response = await fetch(`${apiEndpoint}/signin`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -3273,14 +3265,8 @@ class SignInNavItem extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Compone
         signedIn,
         givenName,
         picture
-      } = result;
-      this.setState({
-        user: {
-          signedIn,
-          givenName,
-          picture
-        }
-      });
+      } = result; // call back from Page.jsx, so that it can update its state and context value, and re-renders the page
+
       const {
         onUserChange
       } = this.props;
@@ -3317,9 +3303,8 @@ class SignInNavItem extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Compone
 
   render() {
     const {
-      user,
-      disabledGoogleAuth
-    } = this.state; // const picture = (
+      user
+    } = this.props; // const picture = (
     // 	<Image src={user.picture} responsive circle id="profile_pic" />
     // );
 
@@ -3333,7 +3318,8 @@ class SignInNavItem extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Compone
     }
 
     const {
-      showing
+      showing,
+      disabledGoogleAuth
     } = this.state;
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["NavItem"], {
       onClick: this.showModal
@@ -3360,7 +3346,6 @@ class SignInNavItem extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Compone
 
 }
 
-SignInNavItem.contextType = _UserContext_js__WEBPACK_IMPORTED_MODULE_3__["default"];
 /* harmony default export */ __webpack_exports__["default"] = (Object(_withToast_jsx__WEBPACK_IMPORTED_MODULE_2__["default"])(SignInNavItem));
 
 /***/ }),
@@ -3549,6 +3534,7 @@ async function graphQLFetch(query, variables = {}, showError = null) {
   try {
     const response = await isomorphic_fetch__WEBPACK_IMPORTED_MODULE_0___default()(apiEndpoint, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },

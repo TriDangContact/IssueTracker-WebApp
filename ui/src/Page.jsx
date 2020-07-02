@@ -19,7 +19,7 @@ import UserContext from './UserContext.js';
 import render from '../server/render.jsx';
 
 // create a simple navbar that links to our routes
-function NavBar({ onUserChange }) {
+function NavBar({ user, onUserChange }) {
 	return (
 		<Navbar fluid collapseOnSelect>
 			<Navbar.Header>
@@ -47,7 +47,7 @@ function NavBar({ onUserChange }) {
 
 				<Nav pullRight>
 					<IssueAddNavItem />
-					<SignInNavItem onUserChange={onUserChange} />
+					<SignInNavItem user={user} onUserChange={onUserChange} />
 					<NavDropdown
 						id="user-dropdown"
 						title={<Glyphicon glyph="option-vertical" />}
@@ -86,7 +86,8 @@ export default class Page extends React.Component {
 	async componentDidMount() {
 		const apiEndpoint = window.ENV.UI_AUTH_ENDPOINT;
 		const response = await fetch(`${apiEndpoint}/user`, {
-			method: 'POST'
+			method: 'POST',
+			credentials: 'include'
 		});
 		const body = await response.text();
 		const result = JSON.parse(body);
@@ -102,7 +103,7 @@ export default class Page extends React.Component {
 		const { user } = this.state;
 		return (
 			<div>
-				<NavBar onUserChange={this.onUserChange} />
+				<NavBar user={user} onUserChange={this.onUserChange} />
 				<Grid fluid>
 					<UserContext.Provider value={user}>
 						<Contents />

@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
 const { AuthenticationError } = require('apollo-server-express');
+const cors = require('cors');
 
 // attempt to retrieve the secret key, or generate one in dev mode
 let { JWT_SECRET } = process.env;
@@ -20,6 +21,10 @@ if (!JWT_SECRET) {
 const routes = new Router();
 
 routes.use(bodyParser.json());
+
+// configure CORS to allow requests from UI server and allow credentials/cookies
+const origin = process.env.UI_SERVER_ORIGIN || 'http://localhost:8000';
+routes.use(cors({ origin, credentials: true }));
 
 // attempt to retrieve the user credentials after user signed in
 function getUser(req) {

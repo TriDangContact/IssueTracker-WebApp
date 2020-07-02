@@ -45,6 +45,9 @@ const apiProxyTarget = process.env.API_PROXY_TARGET;
 if (apiProxyTarget) {
 	app.use('/graphql', proxy({ target: apiProxyTarget }));
 	app.use('/auth', proxy({ target: apiProxyTarget }));
+	console.log('PROXY MODE: ENABLED');
+} else {
+	console.log('PROXY MODE: DISABLED');
 }
 
 // saving the API Endpoint in a global variable so it can be read by browser
