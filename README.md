@@ -13,6 +13,6 @@
 5. On another terminal tab, start the UI server:
 
 - `$ cd ui`
-- `$ npm start`
+- `$ npm run dev-all`
 
 6. Go to localhost:8000 on web browser
