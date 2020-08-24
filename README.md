@@ -1,6 +1,8 @@
 # Issue Tracker
 
-## Features
+Single Page Application that allows a team to perform create, read, update, delete issues. Users can filter the issues by Status and Effort. Provides authentication/authorization using Google's OAuth Library to prevent unauthorized users from modifying the data.
+
+## Dependencies
 
 - React.js
 - Bootstrap

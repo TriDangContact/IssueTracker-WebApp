@@ -22,7 +22,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "e50ba388466e151f3c5a";
+/******/ 	var hotCurrentHash = "7e08b22aaed28b840f54";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -2954,7 +2954,7 @@ function Footer() {
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
     className: "text-center"
   }, "Full source code available at this", ' ', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-    href: "https://github.com/vasansr/pro-mern-stack-2"
+    href: "https://github.com/TriDangContact/IssueTracker-WebApp"
   }, "GitHub repository")));
 }
 
@@ -3336,8 +3336,8 @@ class SignInNavItem extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Compone
       bsStyle: "primary",
       onClick: this.signIn
     }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
-      src: "https://goo.gl/4yjp6B",
-      alt: "Sign In"
+      src: "https://developers.google.com/identity/images/btn_google_signin_light_normal_web.png",
+      alt: "Sign in with Google"
     }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Modal"].Footer, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Button"], {
       bsStyle: "link",
       onClick: this.hideModal
