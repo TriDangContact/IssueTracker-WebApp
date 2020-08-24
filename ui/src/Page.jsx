@@ -68,7 +68,7 @@ function Footer() {
 		<small>
 			<p className="text-center">
 				Full source code available at this{' '}
-				<a href="https://github.com/vasansr/pro-mern-stack-2">
+				<a href="https://github.com/TriDangContact/IssueTracker-WebApp">
 					GitHub repository
 				</a>
 			</p>

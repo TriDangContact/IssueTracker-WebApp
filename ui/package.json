@@ -1,7 +1,7 @@
 {
-	"name": "pro-mern-stack-2",
+	"name": "IssueTracker-WebApp",
 	"version": "1.0.0",
-	"description": "Module 6 exercises",
+	"description": "Issue Tracker Web App",
 	"main": "index.js",
 	"scripts": {
 		"#start": "Starts UI server. Will use HMR if HMR is enabled AND we're dev mode.",
